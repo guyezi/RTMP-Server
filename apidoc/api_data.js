@@ -1,0 +1,7776 @@
+define({ "api": [
+  {
+    "type": "get",
+    "url": "/api/v1/captcha",
+    "title": "03 获取图形验证码",
+    "group": "01auth",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "返回图片验证码",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "失败 HTTP/1.1 400",
+          "content": "{\"code\":400,\"msg\":\"not allow captcha\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/index.go",
+    "groupTitle": "1. 认证接口",
+    "name": "GetApiV1Captcha"
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/logout",
+    "title": "02 登出",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "tm",
+            "description": "<p>时间戳，如：new Date().getTime()</p>"
+          }
+        ]
+      }
+    },
+    "group": "01auth",
+    "description": "<p>此接口在Cookie方式集成时使用</p>",
+    "version": "0.0.0",
+    "filename": "routers/index.go",
+    "groupTitle": "1. 认证接口",
+    "name": "GetApiV1Logout",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/login",
+    "title": "01 登录",
+    "group": "01auth",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>用户名</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>密码(经过md5加密,32位长度,不带中划线,不区分大小写)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Bool",
+            "optional": true,
+            "field": "onlytoken",
+            "description": "<p>是否只获取token, 默认 false ；推荐获取 onlytoken=true，将不会入库持久 session 数据，减少库表操作</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "captcha",
+            "description": "<p>验证码：默认不开启验证码，可在基础配置里开启，开启后此字段必传</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.sid",
+            "description": "<p>调用其它接口方式一： 会话ID，Request Headers 设置 Cookie， 如 Cookie:sid=NCLv1JtZg;</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.token",
+            "description": "<p>调用其它接口方式二：开启接口鉴权后 未登录时 访问其它接口，携带token值传递, 如 http://localhost:10080/api/v1/live/list?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NjkzMTkyOTUsInB3IjoiMjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzMiLCJ0bSI6MTU2OTIzMjg5NSwidW4iOiJhZG1pbiJ9.2SSM7-XJXks5S31K3YgtqOum9mSuQW1nglgkiwz1LN0</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.timeout",
+            "description": "<p>sid及token 超时(秒)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.streamToken",
+            "description": "<p>系统管理-&gt;系统配置-&gt;安全配置 开启资源登录鉴权后，播放视频流资源 或 回看播放时候 携带的token 如：http://localhost:10080/flv/hls/test-002.flv?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTg2MDUxNTcsInB3IjoiMjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzMiLCJ0bSI6MTU5ODYwNDg1NywidW4iOiJhZG1pbiJ9.Sx_eTWN4ynLzFCGM6AJ-s6XQF-3QrBV36zlB5MT39eI</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"sid\":\"NCLv1JtZg\",\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NjkzMTkyOTUsInB3IjoiMjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzMiLCJ0bSI6MTU2OTIzMjg5NSwidW4iOiJhZG1pbiJ9.2SSM7-XJXks5S31K3YgtqOum9mSuQW1nglgkiwz1LN0\",timeout:86400,\"streamToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTg2MDUxNTcsInB3IjoiMjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzMiLCJ0bSI6MTU5ODYwNDg1NywidW4iOiJhZG1pbiJ9.Sx_eTWN4ynLzFCGM6AJ-s6XQF-3QrBV36zlB5MT39eI\",},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "失败 HTTP/1.1 400",
+          "content": "{\"code\":400,\"msg\":\"用户名或密码错误\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "description": "<p>支持GET POST</p>",
+    "version": "0.0.0",
+    "filename": "routers/index.go",
+    "groupTitle": "1. 认证接口",
+    "name": "PostApiV1Login"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/refreshplaytoken",
+    "title": "05 刷新播放加密地址",
+    "group": "01auth",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "id",
+            "description": "<p>直播流ID|开放直播ID|点播视频ID|拉转直播ID，可选参数，可以指定单个刷新token使其先前播放地址失效。如不传id,全部刷新，先前的播放地址全部失效。刷新后需通过接口重新获得播放地址</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/index.go",
+    "groupTitle": "1. 认证接口",
+    "name": "PostApiV1Refreshplaytoken",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/userInfo",
+    "title": "04 获取当前登录用户信息",
+    "group": "01auth",
+    "version": "0.0.0",
+    "filename": "routers/index.go",
+    "groupTitle": "1. 认证接口",
+    "name": "PostApiV1Userinfo",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>用户名</p>"
+          },
+          {
+            "group": "200",
+            "type": "String[]",
+            "optional": false,
+            "field": "roles",
+            "description": "<p>角色列表</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/live/state",
+    "title": "11 获取推流状态",
+    "group": "02live",
+    "description": "<p>支持get|post</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>直播流ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "\"newPushSession\"",
+              "\"closePushSession\""
+            ],
+            "optional": false,
+            "field": "type",
+            "description": "<p>状态,newPushSession:推流中，closePushSession:停止推流</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>流名称</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"TjasquLig\",\"name\":\"test\",\"type\":\"newPushSession\"},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "GetApiV1LiveState"
+  },
+  {
+    "type": "get|post",
+    "url": "/api/v1/live/refreshsign",
+    "title": "10 推流地址刷新",
+    "group": "02live",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>直播流ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"TjasquLig\",\"createAt\":\"2018-12-03 12:50:56\",\"updateAt\":\"2019-02-28 15:24:25\",\"name\":\"test\",\"recordReserve\":0,\"shared\":false,\"authed\":true,\"actived\":true,\"beginAt\":\"\",\"endAt\":\"\",\"sign\":\"6r84H99ig\",\"storePath\":\"\",\"url\":\"rtmp://localhost:10085/hls/TjasquLig?sign=6r84H99ig\",\"sharedLink\":\"/share.html?id=TjasquLig\\u0026type=live\"},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "Get|postApiV1LiveRefreshsign"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/get",
+    "title": "05 获取单条/多条直播流信息",
+    "group": "02live",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>传递单个id，返回单条直播流信息；若英文逗号拼接传递多个，返回的多个直播流信息，此时是数组；</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"TjasquLig\",\"inFlow\":607995992,\"outFlow\":1561325,\"createAt\":\"2018-12-03 12:50:56\",\"updateAt\":\"2019-02-28 15:24:25\",\"name\":\"test\",\"recordReserve\":0,\"shared\":false,\"authed\":true,\"actived\":true,\"beginAt\":\"\",\"endAt\":\"\",\"sign\":\"ojMs3XLmRz\",\"storePath\":\"\",\"url\":\"rtmp://localhost:10085/hls/TjasquLig?sign=ojMs3XLmRz\",\"sharedLink\":\"/share.html?id=TjasquLig\\u0026type=live\",\"session\":{\"Id\":\"TjasquLig\",\"Name\":\"test\",\"Type\":\"live\",\"Application\":\"hls\",\"HLS\":\"/hls/TjasquLig/TjasquLig_live.m3u8\",\"HTTPFLV\":\"/flv/hls/TjasquLig.flv\",\"WSFLV\":\"/ws-flv/hls/TjasquLig.flv\",\"RTMP\":\"rtmp://localhost:10085/hls/TjasquLig\",\"Time\":\"0h 0m 24s\",\"NumOutputs\":0,\"InBytes\":1908466,\"OutBytes\":0,\"InBitrate\":87848,\"OutBitrate\":0,\"AudioBitrate\":18176,\"VideoBitrate\":69671,\"StartTime\":\"2019-02-28 15:24:25\"}},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.recordReserve",
+            "description": "<p>录像保存(天)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.actived",
+            "description": "<p>推流开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.authed",
+            "description": "<p>推流鉴权</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.shared",
+            "description": "<p>分享开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.url",
+            "description": "<p>推流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.storePath",
+            "description": "<p>存储路径</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.inFlow",
+            "description": "<p>推送总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.outFlow",
+            "description": "<p>播放总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "rows.session",
+            "description": "<p>直播信息, 有值时表示正在直播</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Application",
+            "description": "<p>应用名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.AudioBitrate",
+            "description": "<p>音频率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Id",
+            "description": "<p>推流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBitrate",
+            "description": "<p>推送码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBytes",
+            "description": "<p>推送流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.NumOutputs",
+            "description": "<p>在线人数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBitrate",
+            "description": "<p>输出码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBytes",
+            "description": "<p>播放流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Time",
+            "description": "<p>直播时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.VideoBitrate",
+            "description": "<p>音频码率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HLS",
+            "description": "<p>HLS流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HTTPFLV",
+            "description": "<p>HTTP-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WSFLV",
+            "description": "<p>WS-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WEBRTC",
+            "description": "<p>WebRTC流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.DHLS",
+            "description": "<p>延时直播流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.RTMP",
+            "description": "<p>RTMP直播流地址</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveGet"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/list",
+    "title": "02 获取直播列表",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "state",
+            "description": "<p>all:所有直播(默认值) living:直播中，unstart：尚未直播</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    },
+    "group": "02live",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.actived",
+            "description": "<p>推流开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.recordReserve",
+            "description": "<p>录像保存(天)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.actived",
+            "description": "<p>推流开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.authed",
+            "description": "<p>推流鉴权</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.shared",
+            "description": "<p>分享开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.url",
+            "description": "<p>推流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.storePath",
+            "description": "<p>存储路径</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.inFlow",
+            "description": "<p>推送总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.outFlow",
+            "description": "<p>播放总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "rows.session",
+            "description": "<p>直播信息, 有值时表示正在直播</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Application",
+            "description": "<p>应用名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.AudioBitrate",
+            "description": "<p>音频率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Id",
+            "description": "<p>推流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBitrate",
+            "description": "<p>推送码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBytes",
+            "description": "<p>推送流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.NumOutputs",
+            "description": "<p>在线人数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBitrate",
+            "description": "<p>输出码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBytes",
+            "description": "<p>播放流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Time",
+            "description": "<p>直播时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.VideoBitrate",
+            "description": "<p>音频码率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HLS",
+            "description": "<p>HLS流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HTTPFLV",
+            "description": "<p>HTTP-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WSFLV",
+            "description": "<p>WS-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WEBRTC",
+            "description": "<p>WebRTC流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.DHLS",
+            "description": "<p>延时直播流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.RTMP",
+            "description": "<p>RTMP直播流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"rows\":[{\"id\":\"TjasquLig\",\"inFlow\":607995992,\"outFlow\":1561325,\"createAt\":\"2018-12-03 12:50:56\",\"updateAt\":\"2019-02-27 17:28:38\",\"name\":\"test\",\"recordReserve\":0,\"shared\":false,\"authed\":true,\"actived\":true,\"beginAt\":\"\",\"endAt\":\"\",\"sign\":\"ojMs3XLmRz\",\"storePath\":\"\",\"url\":\"rtmp://localhost:10085/hls/TjasquLig?sign=ojMs3XLmRz\",\"sharedLink\":\"/share.html?id=TjasquLig\\u0026type=live\"}],\"total\":3},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveList"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/open/list",
+    "title": "03 获取开放直播列表",
+    "group": "02live",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"rows\":[{\"sharedLink\":\"/share.html?id=testcc\\u0026type=openLive\",\"Id\":\"testcc\",\"inFlow\":607995992,\"outFlow\":1561325,\"Name\":\"testcc\",\"Type\":\"openLive\",\"Application\":\"hls\",\"HLS\":\"/hls/testcc/testcc_live.m3u8\",\"HTTPFLV\":\"/flv/hls/testcc.flv\",\"WEBRTC\":\"/rtc/hls/testcc\",\"WSFLV\":\"/ws-flv/hls/testcc.flv\",\"RTMP\":\"rtmp://localhost:10085/hls/testcc\",\"Time\":\"0h 0m 12s\",\"NumOutputs\":0,\"InBytes\":941931,\"OutBytes\":0,\"InBitrate\":82577,\"OutBitrate\":0,\"AudioBitrate\":17260,\"VideoBitrate\":65317,\"StartTime\":\"2019-02-28 15:19:53\"}],\"total\":1},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "rows.session",
+            "description": "<p>直播信息, 有值时表示正在直播</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Application",
+            "description": "<p>应用名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.AudioBitrate",
+            "description": "<p>音频率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Id",
+            "description": "<p>推流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBitrate",
+            "description": "<p>推送码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBytes",
+            "description": "<p>推送流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.NumOutputs",
+            "description": "<p>在线人数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBitrate",
+            "description": "<p>输出码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBytes",
+            "description": "<p>播放流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Time",
+            "description": "<p>直播时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.VideoBitrate",
+            "description": "<p>音频码率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HLS",
+            "description": "<p>HLS流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HTTPFLV",
+            "description": "<p>HTTP-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WSFLV",
+            "description": "<p>WS-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WEBRTC",
+            "description": "<p>WebRTC流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.DHLS",
+            "description": "<p>延时直播流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.RTMP",
+            "description": "<p>RTMP直播流地址</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveOpenList",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/remove",
+    "title": "09 删除直播",
+    "group": "02live",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": true,
+            "field": "record",
+            "defaultValue": "false",
+            "description": "<p>同时删除录像否, 该参数只对非正在直播的条目有效</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveRemove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/save",
+    "title": "01 新建/编辑直播",
+    "group": "02live",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "id",
+            "description": "<p>不填时表示新建</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "cid",
+            "description": "<p>自定义ID,新建时可以传递自定义ID,可包含大小写字母下划线中划线,需保证唯一性</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "recordReserve",
+            "description": "<p>录像保存(天),不传默认3天（可在直播配置中统一配置）</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": true,
+            "field": "recordPlan",
+            "description": "<p>录像计划，336位2进制数（分别对应一周每天24小时前半小时和后半小时），0表示不存储，1表示存储 ,默认全部录像存储</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": true,
+            "field": "actived",
+            "description": "<p>推流开关,默认开启</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": true,
+            "field": "shared",
+            "description": "<p>分享开关,默认关闭</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": true,
+            "field": "authed",
+            "description": "<p>推流鉴权,默认开启</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "beginAt",
+            "description": "<p>推流有效期开始, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "endAt",
+            "description": "<p>推流有效期结束, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "storePath",
+            "description": "<p>新建时才有效：直播间录像实际存储路径，此处配置绝对路径</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "delay",
+            "description": "<p>延时直播 延时秒数</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveSave",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>状态码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>消息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Map",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.recordReserve",
+            "description": "<p>录像保存(天)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.actived",
+            "description": "<p>推流开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.authed",
+            "description": "<p>推流鉴权</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.shared",
+            "description": "<p>分享开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.url",
+            "description": "<p>推流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.storePath",
+            "description": "<p>存储路径</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.inFlow",
+            "description": "<p>推送总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.outFlow",
+            "description": "<p>播放总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/sessions",
+    "title": "04 获取正在直播会话信息列表",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "id",
+            "description": "<p>传递时返回单路的session信息</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "hls",
+              "live",
+              "vlive",
+              "..."
+            ],
+            "optional": true,
+            "field": "application",
+            "description": "<p>应用名称,不传默认查询所有</p>"
+          }
+        ]
+      }
+    },
+    "group": "02live",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "Application",
+            "description": "<p>应用名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "AudioBitrate",
+            "description": "<p>音频率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "Id",
+            "description": "<p>推流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "InBitrate",
+            "description": "<p>推送码率</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "InBytes",
+            "description": "<p>推送流量</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "NumOutputs",
+            "description": "<p>在线人数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "OutBitrate",
+            "description": "<p>输出码率</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "OutBytes",
+            "description": "<p>输出流量</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "Time",
+            "description": "<p>直播时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "VideoBitrate",
+            "description": "<p>音频码率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "Name",
+            "description": "<p>直播流名称，开放直播名称为空字符串</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "HLS",
+            "description": "<p>HLS流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "HTTPFLV",
+            "description": "<p>HTTP-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "WSFLV",
+            "description": "<p>WS-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "WEBRTC",
+            "description": "<p>WebRTC流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "RTMP",
+            "description": "<p>RTMP直播流地址</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "不传递ID时 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":[{\"Id\":\"testcc\",\"Name\":\"testcc\",\"Type\":\"openLive\",\"Application\":\"hls\",\"HLS\":\"/hls/testcc/testcc_live.m3u8\",\"HTTPFLV\":\"/flv/hls/testcc.flv\",\"WEBRTC\":\"/rtc/hls/testcc\",\"WSFLV\":\"/ws-flv/hls/testcc.flv\",\"RTMP\":\"rtmp://localhost:10085/hls/testcc\",\"Time\":\"0h 1m 22s\",\"NumOutputs\":0,\"InBytes\":6516795,\"OutBytes\":0,\"InBitrate\":88375,\"OutBitrate\":0,\"AudioBitrate\":18395,\"VideoBitrate\":69979,\"StartTime\":\"2019-02-28 15:19:53\"}],\"msg\":\"Success\"}",
+          "type": "json"
+        },
+        {
+          "title": "传递ID HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"Id\":\"testcc\",\"Name\":\"testcc\",\"Type\":\"openLive\",\"Application\":\"hls\",\"HLS\":\"/hls/testcc/testcc_live.m3u8\",\"HTTPFLV\":\"/flv/hls/testcc.flv\",\"WEBRTC\":\"/rtc/hls/testcc\",\"WSFLV\":\"/ws-flv/hls/testcc.flv\",\"RTMP\":\"rtmp://localhost:10085/hls/testcc\",\"Time\":\"0h 2m 13s\",\"NumOutputs\":0,\"InBytes\":10524118,\"OutBytes\":0,\"InBitrate\":86424,\"OutBitrate\":0,\"AudioBitrate\":18323,\"VideoBitrate\":68101,\"StartTime\":\"2019-02-28 15:19:53\"},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveSessions"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/turn/actived",
+    "title": "06 直播流开关",
+    "group": "02live",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>直播流ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": false,
+            "field": "actived",
+            "description": "<p>开启：true，关闭：false</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveTurnActived",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/turn/authed",
+    "title": "07 推流鉴权",
+    "group": "02live",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": false,
+            "field": "authed",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveTurnAuthed",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/live/turn/shared",
+    "title": "08 分享开关",
+    "group": "02live",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": false,
+            "field": "shared",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/live.go",
+    "groupTitle": "2. 云直播-鉴权直播接口",
+    "name": "PostApiV1LiveTurnShared",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vlive/get",
+    "title": "03 获取单条拉转直播信息",
+    "group": "03vlive",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"Qf22edQiR\",\"inFlow\":607995992,\"outFlow\":1561325,\"createAt\":\"2019-01-15 15:39:06\",\"updateAt\":\"2019-02-27 17:28:42\",\"name\":\"test3\",\"type\":\"vod\",\"src\":\"\",\"shared\":false,\"sign\":\"wf2h6OwiRz\",\"status\":\"stop\",\"vodIndex\":-1,\"error\":\"\",\"retry\":142,\"pid\":0,\"target\":\"TjasquLig\",\"vods\":[{\"id\":\"qpQoAdwmg\",\"name\":\"2222\"}],\"sharedLink\":\"/share.html?id=TjasquLig\\u0026type=live\"},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "online",
+              "vod"
+            ],
+            "optional": false,
+            "field": "rows.type",
+            "description": "<p>类型, online - 在线资源, vod - 点播资源</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.src",
+            "description": "<p>在线资源地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object[]",
+            "optional": true,
+            "field": "rows.vods",
+            "description": "<p>点播资源列表(目前支持单个)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "rows.shared",
+            "description": "<p>分享开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.sign",
+            "description": "<p>鉴权参数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.vodIndex",
+            "description": "<p>当前正在直播的点播资源索引</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "unstart",
+              "living",
+              "stop",
+              "error"
+            ],
+            "optional": false,
+            "field": "rows.status",
+            "description": "<p>状态</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.error",
+            "description": "<p>直播异常信息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": true,
+            "field": "rows.pid",
+            "description": "<p>后台进程ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.inFlow",
+            "description": "<p>推送总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.outFlow",
+            "description": "<p>播放总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": true,
+            "field": "transRate",
+            "description": "<p>拉转后的视频码率(单位:kbps)，默认值：0 使用原始视频码率；</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": false,
+            "field": "transHeight",
+            "description": "<p>拉转后的视频高度，默认值：0 使用原始视频高度；</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": true,
+            "field": "transWidth",
+            "description": "<p>拉转后的视频宽度，默认值：0 使用原始视频高度；</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.vods.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.vods.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "rows.session",
+            "description": "<p>直播信息, 有值时表示正在直播</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Application",
+            "description": "<p>应用名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.AudioBitrate",
+            "description": "<p>音频率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Id",
+            "description": "<p>推流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBitrate",
+            "description": "<p>推送码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBytes",
+            "description": "<p>推送流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.NumOutputs",
+            "description": "<p>在线人数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBitrate",
+            "description": "<p>输出码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBytes",
+            "description": "<p>播放流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Time",
+            "description": "<p>直播时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.VideoBitrate",
+            "description": "<p>音频码率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HLS",
+            "description": "<p>HLS流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HTTPFLV",
+            "description": "<p>HTTP-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WSFLV",
+            "description": "<p>WS-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WEBRTC",
+            "description": "<p>WebRTC流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.DHLS",
+            "description": "<p>延时直播流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.RTMP",
+            "description": "<p>RTMP直播流地址</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vlive.go",
+    "groupTitle": "3. 云直播-拉转直播接口",
+    "name": "PostApiV1VliveGet"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vlive/list",
+    "title": "02 获取拉转直播列表",
+    "group": "03vlive",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"rows\":[{\"id\":\"Qf22edQiR\",\"inFlow\":607995992,\"outFlow\":1561325,\"createAt\":\"2019-01-15 15:39:06\",\"updateAt\":\"2019-02-27 17:28:42\",\"name\":\"test3\",\"type\":\"vod\",\"src\":\"\",\"shared\":false,\"sign\":\"wf2h6OwiRz\",\"status\":\"stop\",\"vodIndex\":-1,\"error\":\"\",\"retry\":142,\"pid\":0,\"target\":\"TjasquLig\",\"vods\":[{\"id\":\"qpQoAdwmg\",\"name\":\"2222\"}],\"sharedLink\":\"/share.html?id=TjasquLig\\u0026type=live\"}],\"total\":12},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "online",
+              "vod"
+            ],
+            "optional": false,
+            "field": "rows.type",
+            "description": "<p>类型, online - 在线资源, vod - 点播资源</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.src",
+            "description": "<p>在线资源地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object[]",
+            "optional": true,
+            "field": "rows.vods",
+            "description": "<p>点播资源列表(目前支持单个)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "rows.shared",
+            "description": "<p>分享开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.sign",
+            "description": "<p>鉴权参数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.vodIndex",
+            "description": "<p>当前正在直播的点播资源索引</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "unstart",
+              "living",
+              "stop",
+              "error"
+            ],
+            "optional": false,
+            "field": "rows.status",
+            "description": "<p>状态</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.error",
+            "description": "<p>直播异常信息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": true,
+            "field": "rows.pid",
+            "description": "<p>后台进程ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.inFlow",
+            "description": "<p>推送总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.outFlow",
+            "description": "<p>播放总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": true,
+            "field": "transRate",
+            "description": "<p>拉转后的视频码率(单位:kbps)，默认值：0 使用原始视频码率；</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": false,
+            "field": "transHeight",
+            "description": "<p>拉转后的视频高度，默认值：0 使用原始视频高度；</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": true,
+            "field": "transWidth",
+            "description": "<p>拉转后的视频宽度，默认值：0 使用原始视频高度；</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.vods.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.vods.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "rows.session",
+            "description": "<p>直播信息, 有值时表示正在直播</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Application",
+            "description": "<p>应用名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.AudioBitrate",
+            "description": "<p>音频率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Id",
+            "description": "<p>推流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBitrate",
+            "description": "<p>推送码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.InBytes",
+            "description": "<p>推送流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.NumOutputs",
+            "description": "<p>在线人数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBitrate",
+            "description": "<p>输出码率(单位：B/s)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.session.OutBytes",
+            "description": "<p>播放流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.Time",
+            "description": "<p>直播时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.VideoBitrate",
+            "description": "<p>音频码率</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HLS",
+            "description": "<p>HLS流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.HTTPFLV",
+            "description": "<p>HTTP-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WSFLV",
+            "description": "<p>WS-FLV流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.WEBRTC",
+            "description": "<p>WebRTC流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.DHLS",
+            "description": "<p>延时直播流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.session.RTMP",
+            "description": "<p>RTMP直播流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vlive.go",
+    "groupTitle": "3. 云直播-拉转直播接口",
+    "name": "PostApiV1VliveList",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vlive/remove",
+    "title": "07 删除拉转直播",
+    "group": "03vlive",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vlive.go",
+    "groupTitle": "3. 云直播-拉转直播接口",
+    "name": "PostApiV1VliveRemove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vlive/save",
+    "title": "01 新建/编辑拉转直播",
+    "group": "03vlive",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "id",
+            "description": "<p>不填时表示新建</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "cid",
+            "description": "<p>自定义ID,新建时可以传递自定义ID,可包含大小写字母下划线中划线,需保证唯一性</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "online",
+              "vod"
+            ],
+            "optional": false,
+            "field": "type",
+            "description": "<p>类型, online - 在线资源, vod - 点播资源</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "src",
+            "description": "<p>在线资源地址</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "tcp",
+              "udp",
+              "udp_multicast"
+            ],
+            "optional": true,
+            "field": "transport",
+            "description": "<p>rtsp流传输类型 默认tcp</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object[]",
+            "optional": true,
+            "field": "vods",
+            "description": "<p>点播资源列表</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "vods.id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "vods.name",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "target",
+            "description": "<p>视频直播流ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": true,
+            "field": "shared",
+            "description": "<p>分享开关,默认fasle</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transRate",
+            "description": "<p>拉转后的视频码率(单位:kbps)，默认值：0 使用原始视频码率；</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transHeight",
+            "description": "<p>拉转后的视频高度，默认值：0 使用原始视频高度；</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transWidth",
+            "description": "<p>拉转后的视频宽度，默认值：0 使用原始视频高度；</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"SrBPHr9ig\",\"createAt\":\"2019-02-28 15:35:02\",\"updateAt\":\"2019-02-28 15:35:02\",\"name\":\"test\",\"type\":\"vod\",\"src\":\"\",\"shared\":false,\"sign\":\"I9BEN9rmRz\",\"status\":\"unstart\",\"vodIndex\":-1,\"error\":\"\",\"retry\":0,\"pid\":0,\"target\":\"\",\"vods\":[{\"id\":\"qpQoAdwmg\",\"name\":\"2222\"}],\"sharedLink\":\"/share.html?id=SrBPHr9ig\\u0026type=vlive\"},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "online",
+              "vod"
+            ],
+            "optional": false,
+            "field": "rows.type",
+            "description": "<p>类型, online - 在线资源, vod - 点播资源</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.src",
+            "description": "<p>在线资源地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object[]",
+            "optional": true,
+            "field": "rows.vods",
+            "description": "<p>点播资源列表(目前支持单个)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "rows.shared",
+            "description": "<p>分享开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.sign",
+            "description": "<p>鉴权参数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.vodIndex",
+            "description": "<p>当前正在直播的点播资源索引</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "unstart",
+              "living",
+              "stop",
+              "error"
+            ],
+            "optional": false,
+            "field": "rows.status",
+            "description": "<p>状态</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.error",
+            "description": "<p>直播异常信息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": true,
+            "field": "rows.pid",
+            "description": "<p>后台进程ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.inFlow",
+            "description": "<p>推送总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "rows.outFlow",
+            "description": "<p>播放总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": true,
+            "field": "transRate",
+            "description": "<p>拉转后的视频码率(单位:kbps)，默认值：0 使用原始视频码率；</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": false,
+            "field": "transHeight",
+            "description": "<p>拉转后的视频高度，默认值：0 使用原始视频高度；</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": true,
+            "field": "transWidth",
+            "description": "<p>拉转后的视频宽度，默认值：0 使用原始视频高度；</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.vods.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.vods.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vlive.go",
+    "groupTitle": "3. 云直播-拉转直播接口",
+    "name": "PostApiV1VliveSave"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vlive/start",
+    "title": "05 开始拉转直播",
+    "group": "03vlive",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vlive.go",
+    "groupTitle": "3. 云直播-拉转直播接口",
+    "name": "PostApiV1VliveStart",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vlive/stop",
+    "title": "06 停止拉转直播",
+    "group": "03vlive",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vlive.go",
+    "groupTitle": "3. 云直播-拉转直播接口",
+    "name": "PostApiV1VliveStop",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vlive/turn/shared",
+    "title": "04 分享开关",
+    "group": "03vlive",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": false,
+            "field": "shared",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vlive.go",
+    "groupTitle": "3. 云直播-拉转直播接口",
+    "name": "PostApiV1VliveTurnShared",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/record/download/:id/:period",
+    "title": "09 下载录像文件",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "period",
+            "description": "<p>录像开始时间, YYYYMMDDHHmmss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "GetApiV1RecordDownloadIdPeriod",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/record/getsnap",
+    "title": "12 获取录像快照",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID, 返回指定设备录像的最新快照</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "period",
+            "description": "<p>片段时间, YYYYMMDDHHmmss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": true,
+            "field": "resolutionW",
+            "description": "<p>分辨率宽,默认是320，同时传1，根据源视频分辨率截图,第一次请求有效</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": true,
+            "field": "resolutionH",
+            "description": "<p>分辨率高,默认是240，同时传1，根据源视频分辨率截图,第一次请求有效</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "调用后会直接返回图片流，该接口可以直接配置到类似img 标签的src属性里",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "GetApiV1RecordGetsnap"
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/record/query_devices",
+    "title": "01 查询有录像设备",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>支持get|post</p>",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"rows\":[{\"id\":\"pce_Bw9mR\",\"createAt\":\"2019-02-27 15:18:18\",\"updateAt\":\"2019-02-27 15:19:48\",\"name\":\"测试直播间\",\"recordReserve\":3,\"type\":\"live\",\"storePath\":\"\"},{\"id\":\"testcc\",\"createAt\":\"2019-02-28 15:19:53\",\"updateAt\":\"2019-02-28 15:23:45\",\"name\":\"testcc\",\"recordReserve\":0,\"type\":\"live\",\"storePath\":\"\"}],\"total\":3},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "GetApiV1RecordQuery_devices"
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/record/video/hls/:id/:starttime/:endtime/video.m3u8",
+    "title": "11 指定时间段录像播放(连续录像hls播放)",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "starttime",
+            "description": "<p>开始时间, YYYYMMDDHHmmss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "endtime",
+            "description": "<p>结束时间, YYYYMMDDHHmmss</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>说明：hls不会合成临时文件，速度快，但starttime 和 endtime 中间的录像不能有缺失</p> <p>m3u8播放示例</p> <p>http://localhost:10080/api/v1/record/video/hls/teet/20180911101139/20180911101248/video.m3u8</p> <p>如果系统管理-&gt;系统配置-&gt;安全配置 开启资源登录鉴权后 需在地址后面携带登录接口获取的 streamToken ，如： http://localhost:10080/api/v1/record/video/hls/teet/20180911101139/20180911101248/video.m3u8&amp;token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTg2MDUxNTcsInB3IjoiMjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzMiLCJ0bSI6MTU5ODYwNDg1NywidW4iOiJhZG1pbiJ9.Sx_eTWN4ynLzFCGM6AJ-s6XQF-3QrBV36zlB5MT39eI</p>",
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "GetApiV1RecordVideoHlsIdStarttimeEndtimeVideoM3u8"
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/record/video/:operate/:id/:starttime/:endtime/video.mp4",
+    "title": "10 指定时间段录像播放及下载(mp4合成播放下载)",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "play",
+              "download"
+            ],
+            "optional": false,
+            "field": "operate",
+            "description": "<p>调用操作 play:播放 download下载 ，其中play和download都会在服务端临时合成mp4较为耗时；hls不会合成临时文件，但不适用于有缺失的录像段中</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "starttime",
+            "description": "<p>开始时间, YYYYMMDDHHmmss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "endtime",
+            "description": "<p>结束时间, YYYYMMDDHHmmss</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>mp4播放示例</p> <p>http://localhost:10080/api/v1/record/video/play/teet/20180911101139/20180911101248/video.mp4</p> <p>mp4下载示例</p> <p>http://localhost:10080/api/v1/record/video/download/teet/20180911101139/20180911101248/video.mp4</p> <p>如果系统管理-&gt;系统配置-&gt;安全配置 开启资源登录鉴权后 需在地址后面携带登录接口获取的 streamToken ，如： http://localhost:10080/api/v1/record/video/play/teet/20180911101139/20180911101248/video.mp4&amp;token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTg2MDUxNTcsInB3IjoiMjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzMiLCJ0bSI6MTU5ODYwNDg1NywidW4iOiJhZG1pbiJ9.Sx_eTWN4ynLzFCGM6AJ-s6XQF-3QrBV36zlB5MT39eI</p>",
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "GetApiV1RecordVideoOperateIdStarttimeEndtimeVideoMp4"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/record/important",
+    "title": "04 重要录像标记",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "period",
+            "description": "<p>录像开始时间, YYYYMMDDHHmmss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "PostApiV1RecordImportant",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/record/query_daily",
+    "title": "03 按日查询设备所有录像",
+    "group": "04record",
+    "description": "<p>支持get|post</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "period",
+            "description": "<p>日期, YYYYMMDD</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>设备名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "list",
+            "description": "<p>当天的录像列表</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "list.name",
+            "description": "<p>设备名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "list.start_time",
+            "description": "<p>开始时间, YYYYMMDDHHmmss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "list.duration",
+            "description": "<p>录像时长(秒)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "list.hls",
+            "description": "<p>录像播放链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "list.snap",
+            "description": "<p>录像封面链接</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"list\":[{\"duration\":\"15.613\",\"hls\":\"/frecord/testcc/20190228/20190228152345/testcc_record.m3u8\",\"important\":false,\"name\":\"testcc\",\"snap\":\"\",\"start_time\":\"20190228152345\"},{\"duration\":\"161.283\",\"hls\":\"/frecord/testcc/20190228/20190228151953/testcc_record.m3u8\",\"important\":false,\"name\":\"testcc\",\"snap\":\"\",\"start_time\":\"20190228151953\"}],\"name\":\"testcc\"},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "PostApiV1RecordQuery_daily"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/record/query_flags",
+    "title": "02 查询设备所有录像记录",
+    "group": "04record",
+    "description": "<p>支持get|post</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "key",
+            "description": "<p>月份, YYYYMM</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "value",
+            "description": "<p>标记当月每一天是否有录像, 0 - 没有录像, 1 - 有录像</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"201902\":\"0000000000000000000000000010000\"},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "PostApiV1RecordQuery_flags"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/record/query_records",
+    "title": "13 查询设备所有录像",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "day",
+            "description": "<p>指定返回具体日期的录像文件 yyyymmdd  如：20190228 ; 默认为空, 只返回目录；当值为all, 返回所有录像</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"201902\":{\"20190228\":[{\"duration\":\"15.613\",\"hls\":\"/frecord/testcc/20190228/20190228152345/testcc_record.m3u8\",\"important\":false,\"name\":\"testcc\",\"snap\":\"\",\"start_time\":\"20190228152345\",\"time\":\"2019-02-28 15:23:45\"},{\"duration\":\"161.283\",\"hls\":\"/frecord/testcc/20190228/20190228151953/testcc_record.m3u8\",\"important\":false,\"name\":\"testcc\",\"snap\":\"\",\"start_time\":\"20190228151953\",\"time\":\"2019-02-28 15:19:53\"}],\"days\":[\"20190228\"]},\"months\":[\"201902\"]},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "PostApiV1RecordQuery_records"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/record/remove",
+    "title": "06 删除单条录像",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "period",
+            "description": "<p>录像开始时间, YYYYMMDDHHmmss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "PostApiV1RecordRemove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/record/remove_daily",
+    "title": "08 按天删除设备录像",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "period",
+            "description": "<p>日期, YYYYMMDD</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "PostApiV1RecordRemove_daily",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/record/remove_device",
+    "title": "07 删除设备所有录像",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "PostApiV1RecordRemove_device",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/record/unimportant",
+    "title": "05 取消重要录像的标记",
+    "group": "04record",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "period",
+            "description": "<p>录像开始时间, YYYYMMDDHHmmss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/record.go",
+    "groupTitle": "4. 云直播-云端录像接口",
+    "name": "PostApiV1RecordUnimportant",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/snap/current",
+    "title": "08 获取最新快照",
+    "group": "05snap",
+    "description": "<p>支持get|post</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>直播流ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "resolution",
+            "description": "<p>分辨率,默认是：320x240 (宽x高) 当需要返回最新快照时，如果存在最新快照直接返回，不存在按照该分辨率返回。</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"TjasquLig\":\"/fsnap/TjasquLig/20190228/TjasquLig_20190228155555.png\"},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/snap.go",
+    "groupTitle": "5. 云直播-直播快照接口",
+    "name": "GetApiV1SnapCurrent"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/snap/get",
+    "title": "03 获取单条快照配置信息",
+    "group": "05snap",
+    "description": "<p>支持get|post</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"baMFid9mg\",\"createAt\":\"2019-02-21 13:57:49\",\"updateAt\":\"2019-02-27 17:29:19\",\"liveID\":null,\"snapReserve\":3,\"snapInterval\":60,\"actived\":true,\"beginAt\":\"\",\"endAt\":\"\",\"resolutionW\":320,\"resolutionH\":240,\"snapTime\":null},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": "<p>配置ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "rows.liveID",
+            "description": "<p>关联直播流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.snapReserve",
+            "description": "<p>快照保存(天)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.snapInterval",
+            "description": "<p>快照间隔(秒)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "rows.actived",
+            "description": "<p>快照开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.beginAt",
+            "description": "<p>有效开始时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.endAt",
+            "description": "<p>有效结束时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.activedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.resolutionW",
+            "description": "<p>截图分辨率宽</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.resolutionH",
+            "description": "<p>截图分辨率高</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/snap.go",
+    "groupTitle": "5. 云直播-直播快照接口",
+    "name": "PostApiV1SnapGet"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/snap/list",
+    "title": "02 获取快照配置列表",
+    "group": "05snap",
+    "description": "<p>支持get|post</p>",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"rows\":[{\"id\":\"baMFid9mg\",\"createAt\":\"2019-02-21 13:57:49\",\"updateAt\":\"2019-02-27 17:29:19\",\"liveID\":[\"wA2ti0Qig\"],\"snapReserve\":3,\"snapInterval\":60,\"actived\":true,\"beginAt\":\"\",\"endAt\":\"\",\"resolutionW\":320,\"resolutionH\":240,\"snapTime\":null}],\"total\":1},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": "<p>配置ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "rows.liveID",
+            "description": "<p>关联直播流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.snapReserve",
+            "description": "<p>快照保存(天)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.snapInterval",
+            "description": "<p>快照间隔(秒)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "rows.actived",
+            "description": "<p>快照开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.beginAt",
+            "description": "<p>有效开始时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.endAt",
+            "description": "<p>有效结束时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.activedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.resolutionW",
+            "description": "<p>截图分辨率宽</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.resolutionH",
+            "description": "<p>截图分辨率高</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/snap.go",
+    "groupTitle": "5. 云直播-直播快照接口",
+    "name": "PostApiV1SnapList",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/snap/query",
+    "title": "07 快照查询接口",
+    "group": "05snap",
+    "description": "<p>支持get|post</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>直播流ID，支持多个ID可以用英文逗号拼接,只有id入参没有时间入参时，只返回最后一张快照</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "starttime",
+            "description": "<p>开始时间, YYYYMMDDHHmmss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "endtime",
+            "description": "<p>结束时间, YYYYMMDDHHmmss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "start",
+            "description": "<p>分页开始, 默认从0开始</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "limit",
+            "description": "<p>分页大小，默认是10</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"TjasquLig\":{\"total\":4,\"rows\":[{\"src\":\"/fsnap/TjasquLig/20190228/TjasquLig_20190228155155.png\",\"time\":\"2019-02-28 15:51:55\"},{\"src\":\"/fsnap/TjasquLig/20190228/TjasquLig_20190228155055.png\",\"time\":\"2019-02-28 15:50:55\"},{\"src\":\"/fsnap/TjasquLig/20190228/TjasquLig_20190228154955.png\",\"time\":\"2019-02-28 15:49:55\"},{\"src\":\"/fsnap/TjasquLig/20190228/TjasquLig_20190228154855.png\",\"time\":\"2019-02-28 15:48:55\"}]}},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/snap.go",
+    "groupTitle": "5. 云直播-直播快照接口",
+    "name": "PostApiV1SnapQuery"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/snap/remove",
+    "title": "05 删除快照配置",
+    "group": "05snap",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": true,
+            "field": "removeSnap",
+            "defaultValue": "true",
+            "description": "<p>默认同时删除所有快照</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/snap.go",
+    "groupTitle": "5. 云直播-直播快照接口",
+    "name": "PostApiV1SnapRemove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/snap/save",
+    "title": "01 新建/编辑快照配置",
+    "group": "05snap",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "id",
+            "description": "<p>不填时表示新建</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "liveID",
+            "description": "<p>关联的直播ID。一个或多个，多个用英文逗号间隔，如：test1,test2,test3</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": false,
+            "field": "actived",
+            "description": "<p>快照开关</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "snapReserve",
+            "description": "<p>快照保存(天)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "snapInterval",
+            "description": "<p>快照间隔(秒),最小间隔是60秒</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "beginAt",
+            "description": "<p>快照开始, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "endAt",
+            "description": "<p>快照结束, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": true,
+            "field": "resolutionW",
+            "description": "<p>分辨率宽,默认是320，同时传1，根据源视频分辨率截图</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": true,
+            "field": "resolutionH",
+            "description": "<p>分辨率高,默认是240，同时传1，根据源视频分辨率截图</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/snap.go",
+    "groupTitle": "5. 云直播-直播快照接口",
+    "name": "PostApiV1SnapSave",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": "<p>配置ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "rows.liveID",
+            "description": "<p>关联直播流ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.snapReserve",
+            "description": "<p>快照保存(天)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "rows.snapInterval",
+            "description": "<p>快照间隔(秒)</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "rows.actived",
+            "description": "<p>快照开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.beginAt",
+            "description": "<p>有效开始时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.endAt",
+            "description": "<p>有效结束时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.activedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.resolutionW",
+            "description": "<p>截图分辨率宽</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.resolutionH",
+            "description": "<p>截图分辨率高</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/snap/turn/actived",
+    "title": "04 快照开关",
+    "group": "05snap",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": false,
+            "field": "actived",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/snap.go",
+    "groupTitle": "5. 云直播-直播快照接口",
+    "name": "PostApiV1SnapTurnActived",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/vod/download/:id",
+    "title": "10 下载点播文件",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>点播ID</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "GetApiV1VodDownloadId",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/get",
+    "title": "04 获取单条点播信息",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"qpQoAdwmg\",\"createAt\":\"2019-01-15 11:17:41\",\"updateAt\":\"2019-01-15 11:22:02\",\"name\":\"2222\",\"size\":111710737,\"type\":\"video/mp4\",\"path\":\"\",\"folder\":\"qpQoAdwmg\",\"status\":\"done\",\"duration\":193,\"videoCodec\":\"h264\",\"audioCodec\":\"aac\",\"aspect\":\"1280x720\",\"error\":\"\",\"shared\":false,\"rotate\":0,\"resolution\":\"yh,fhd,hd,sd\",\"isresolution\":true,\"resolutiondefault\":\"hd\",\"transvideo\":false,\"snapUrl\":\"/fvod/qpQoAdwmg/snap.jpg\",\"videoUrl\":\"/fvod/qpQoAdwmg/video.m3u8\",\"sharedLink\":\"/share.html?id=qpQoAdwmg\\u0026type=vod\",\"flowNum\":260196512,\"progress\":0,\"playNum\":13},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": "<p>名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.size",
+            "description": "<p>文件大小</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.type",
+            "description": "<p>文件类型</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "transing",
+              "waiting",
+              "done",
+              "error"
+            ],
+            "optional": false,
+            "field": "rows.status",
+            "description": "<p>转码状态:(转码中-transing、等待转码-waiting、转码完成-done、转码失败-error)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.duration",
+            "description": "<p>时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.videoCodec",
+            "description": "<p>视频编码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.audioCodec",
+            "description": "<p>音频编码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.aspect",
+            "description": "<p>宽高</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.error",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.snapUrl",
+            "description": "<p>封面图片链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.videoUrl",
+            "description": "<p>点播播放链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "Integer",
+            "optional": false,
+            "field": "rows.playNum",
+            "description": "<p>播放次数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Integer",
+            "optional": false,
+            "field": "rows.flowNum",
+            "description": "<p>播放总流量(单位:B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodGet"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/list",
+    "title": "02 获取点播列表",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "folder",
+            "description": "<p>子文件夹</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "done",
+              "waiting",
+              "transing",
+              "error"
+            ],
+            "optional": true,
+            "field": "status",
+            "description": "<p>状态已完成、等待中、转码中、已失败，默认空字符串表示全部查询</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>支持get|post</p>",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"other\":3,\"rows\":[{\"id\":\"qpQoAdwmg\",\"createAt\":\"2019-01-15 11:17:41\",\"updateAt\":\"2019-01-15 11:22:02\",\"name\":\"2222\",\"size\":111710737,\"type\":\"video/mp4\",\"path\":\"\",\"folder\":\"qpQoAdwmg\",\"status\":\"done\",\"duration\":193,\"videoCodec\":\"h264\",\"audioCodec\":\"aac\",\"aspect\":\"1280x720\",\"error\":\"\",\"shared\":false,\"rotate\":0,\"resolution\":\"yh,fhd,hd,sd\",\"isresolution\":true,\"resolutiondefault\":\"hd\",\"transvideo\":false,\"snapUrl\":\"/fvod/qpQoAdwmg/snap.jpg\",\"videoUrl\":\"/fvod/qpQoAdwmg/video.m3u8\",\"sharedLink\":\"/share.html?id=qpQoAdwmg\\u0026type=vod\",\"flowNum\":260196512,\"progress\":0,\"playNum\":13},{\"id\":\"dMeKIMlig\",\"createAt\":\"2019-01-25 10:58:34\",\"updateAt\":\"2019-02-21 15:51:25\",\"name\":\"测试视频\",\"size\":3958903,\"type\":\"video/mp4\",\"path\":\"\",\"folder\":\"test/dMeKIMlig\",\"status\":\"done\",\"duration\":59,\"videoCodec\":\"h264\",\"audioCodec\":\"aac\",\"aspect\":\"480x288\",\"error\":\"\",\"shared\":true,\"rotate\":0,\"resolution\":\"\",\"isresolution\":false,\"resolutiondefault\":\"hd\",\"transvideo\":false,\"snapUrl\":\"/fvod/test/dMeKIMlig/snap.jpg\",\"videoUrl\":\"/fvod/test/dMeKIMlig/video.m3u8\",\"sharedLink\":\"/share.html?id=dMeKIMlig\\u0026type=vod\",\"flowNum\":16955156,\"progress\":0,\"playNum\":6}],\"total\":5},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": "<p>名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.size",
+            "description": "<p>文件大小</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.type",
+            "description": "<p>文件类型</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "transing",
+              "waiting",
+              "done",
+              "error"
+            ],
+            "optional": false,
+            "field": "rows.status",
+            "description": "<p>转码状态:(转码中-transing、等待转码-waiting、转码完成-done、转码失败-error)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.duration",
+            "description": "<p>时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.videoCodec",
+            "description": "<p>视频编码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.audioCodec",
+            "description": "<p>音频编码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.aspect",
+            "description": "<p>宽高</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.error",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.snapUrl",
+            "description": "<p>封面图片链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.videoUrl",
+            "description": "<p>点播播放链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "Integer",
+            "optional": false,
+            "field": "rows.playNum",
+            "description": "<p>播放次数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Integer",
+            "optional": false,
+            "field": "rows.flowNum",
+            "description": "<p>播放总流量(单位:B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodList"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/move",
+    "title": "16 移动点播文件",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "vodid",
+            "description": "<p>点播文件ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "subcatalogid",
+            "description": "<p>子目录ID</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodMove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/progress",
+    "title": "11 获取正在转码进度",
+    "group": "06vod",
+    "description": "<p>支持get|post</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "id",
+            "description": "<p>点播ID,不传返回所有正在转码的,</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>点播ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "progress",
+            "description": "<p>进度, [0-100]</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":[{\"id\":\"qpQoAdwmg\",\"progress\":100}],\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodProgress"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/remove",
+    "title": "08 删除点播",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodRemove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/removeBatch",
+    "title": "09 批量删除点播文件",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Array",
+            "optional": false,
+            "field": "ids",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodRemovebatch",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/removefile",
+    "title": "18 删除上传的源文件",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodRemovefile",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/retrans",
+    "title": "17 重新转码",
+    "description": "<p>针对转码完成的，请求重新转码，重新转码会根据最新的直播配置进行转码</p>",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "resolution",
+            "description": "<p>多清晰度转码 如 yh,hfd,hd,sd  其中yh:原始视频(必须包含)，hfd:超清，hd:高清，sd:标清</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "trans",
+            "description": "<p>是否强制转码 yes|no，默认值：no</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transRate",
+            "description": "<p>视频码率(单位:kbps)，默认值：0 使用原始视频码率；设置强制转码后生效；</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transHeight",
+            "description": "<p>视频高度，默认值：0 使用原始视频高度；设置强制转码后生效；</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transWidth",
+            "description": "<p>视频宽度，默认值：0 使用原始视频高度；设置强制转码后生效；</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodRetrans",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/save",
+    "title": "05 编辑点播",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": false,
+            "field": "shared",
+            "description": "<p>鉴权开关</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodSave",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/sharelist",
+    "title": "03 获取分享点播列表",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "folder",
+            "description": "<p>子文件夹</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"catalogs\":[{\"id\":\"s6Q4T2PmR\",\"createAt\":\"2018-12-10 17:25:10\",\"updateAt\":\"2018-12-10 17:25:10\",\"folder\":\"test\",\"name\":\"测试\",\"desc\":\"\",\"realPath\":\"\",\"sort\":1}],\"other\":0,\"rows\":[],\"total\":2},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": "<p>名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.size",
+            "description": "<p>文件大小</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.type",
+            "description": "<p>文件类型</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "transing",
+              "waiting",
+              "done",
+              "error"
+            ],
+            "optional": false,
+            "field": "rows.status",
+            "description": "<p>转码状态:(转码中-transing、等待转码-waiting、转码完成-done、转码失败-error)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.duration",
+            "description": "<p>时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.videoCodec",
+            "description": "<p>视频编码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.audioCodec",
+            "description": "<p>音频编码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.aspect",
+            "description": "<p>宽高</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.error",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.snapUrl",
+            "description": "<p>封面图片链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.videoUrl",
+            "description": "<p>点播播放链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "Integer",
+            "optional": false,
+            "field": "rows.playNum",
+            "description": "<p>播放次数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Integer",
+            "optional": false,
+            "field": "rows.flowNum",
+            "description": "<p>播放总流量(单位:B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodSharelist"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/snap",
+    "title": "06 设置点播封面",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "time",
+            "description": "<p>时间, HH:mm:ss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodSnap",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/subcatalogadd",
+    "title": "13 添加子目录",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "folder",
+            "description": "<p>目录</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>目录名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "path",
+            "description": "<p>目录实际路径</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "desc",
+            "description": "<p>目录描述</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"数据ID\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodSubcatalogadd"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/subcatalogdel",
+    "title": "15 删除子目录",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>子目录ID</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodSubcatalogdel",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/subcatalogedit",
+    "title": "14 编辑子目录",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>主键ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>目录名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "desc",
+            "description": "<p>目录描述</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": false,
+            "field": "sort",
+            "description": "<p>排序</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodSubcatalogedit",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/subcataloglist",
+    "title": "12 获取子目录列表",
+    "group": "06vod",
+    "description": "<p>支持get|post</p>",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": "<p>数据ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.folder",
+            "description": "<p>子目录名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": "<p>目录别名</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.desc",
+            "description": "<p>目录描述</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.realPath",
+            "description": "<p>实际路径</p>"
+          },
+          {
+            "group": "200",
+            "type": "bool",
+            "optional": false,
+            "field": "rows.default",
+            "description": "<p>是否是默认路径</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"rootPath\":\"D:/07Go/GOPATH/src/liveqing.com/liveqing/LiveQing/data/vod\",\"rows\":[{\"id\":\"s6Q4T2PmR\",\"createAt\":\"2018-12-10 17:25:10\",\"updateAt\":\"2018-12-10 17:25:10\",\"folder\":\"test\",\"name\":\"测试\",\"desc\":\"\",\"realPath\":\"\",\"sort\":1}],\"total\":1},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodSubcataloglist"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/turn/shared",
+    "title": "07 分享开关",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "optional": false,
+            "field": "shared",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodTurnShared",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/vod/upload",
+    "title": "01 上传点播文件",
+    "group": "06vod",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "cid",
+            "description": "<p>自定义ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "File",
+            "optional": false,
+            "field": "file",
+            "description": "<p>上传的文件</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "path",
+            "description": "<p>指定上传到至 分类存储配置-子目录 如： video1</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "resolution",
+            "description": "<p>多清晰度转码 如 yh,hfd,hd,sd  其中yh:原始视频(必须包含)，hfd:超清，hd:高清，sd:标清</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "trans",
+            "description": "<p>是否强制转码 yes|no，默认值：no</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transRate",
+            "description": "<p>视频码率(单位:kbps)，默认值：0 使用原始视频码率；设置强制转码后生效；</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transHeight",
+            "description": "<p>视频高度，默认值：0 使用原始视频高度；设置强制转码后生效；</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "transWidth",
+            "description": "<p>视频宽度，默认值：0 使用原始视频高度；设置强制转码后生效；</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"Jv8QwX9mR\",\"createAt\":\"2019-02-28 11:14:35\",\"updateAt\":\"2019-02-28 11:14:36\",\"name\":\"11\",\"size\":27353976,\"type\":\"video/mp4\",\"path\":\"D:\\\\data\\\\vod\\\\Jv8QwX9mR.mp4\",\"folder\":\"Jv8QwX9mR\",\"status\":\"waiting\",\"duration\":123,\"videoCodec\":\"h264\",\"audioCodec\":\"aac\",\"aspect\":\"960x540\",\"error\":\"\",\"shared\":false,\"rotate\":0,\"resolution\":\"yh,fhd,hd,sd\",\"isresolution\":true,\"resolutiondefault\":\"hd\",\"transvideo\":false,\"snapUrl\":\"\",\"videoUrl\":\"/fvod/Jv8QwX9mR/video.m3u8\",\"sharedLink\":\"/share.html?id=Jv8QwX9mR\\u0026type=vod\",\"flowNum\":0,\"progress\":0,\"playNum\":0},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": "<p>名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.size",
+            "description": "<p>文件大小</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.type",
+            "description": "<p>文件类型</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "transing",
+              "waiting",
+              "done",
+              "error"
+            ],
+            "optional": false,
+            "field": "rows.status",
+            "description": "<p>转码状态:(转码中-transing、等待转码-waiting、转码完成-done、转码失败-error)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.duration",
+            "description": "<p>时长</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.videoCodec",
+            "description": "<p>视频编码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.audioCodec",
+            "description": "<p>音频编码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.aspect",
+            "description": "<p>宽高</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.error",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.snapUrl",
+            "description": "<p>封面图片链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.videoUrl",
+            "description": "<p>点播播放链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "Integer",
+            "optional": false,
+            "field": "rows.playNum",
+            "description": "<p>播放次数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Integer",
+            "optional": false,
+            "field": "rows.flowNum",
+            "description": "<p>播放总流量(单位:B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间, YYYY-MM-DD HH:mm:ss</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间, YYYY-MM-DD HH:mm:ss</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/vod.go",
+    "groupTitle": "6. 云视频-点播接口",
+    "name": "PostApiV1VodUpload"
+  },
+  {
+    "type": "get|post",
+    "url": "/api/v1/cloud/client/get",
+    "title": "03 获取单条/多条接入设备信息",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "id",
+            "description": "<p>传递单个主键id，返回单条接入设备信息；若英文逗号拼接传递多个，返回的多个接入设备信息；同时传递优先使用id；</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "clientid",
+            "description": "<p>传递单个设备id，返回单条接入设备信息；若英文逗号拼接传递多个，返回的多个接入设备信息；同时传递优先使用id;</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>状态码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>消息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.id",
+            "description": "<p>主键ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.ClientID",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.ClientName",
+            "description": "<p>设备名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.ClientUser",
+            "description": "<p>设备用户</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.ClientPwd",
+            "description": "<p>设备密码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.ClientConfig",
+            "description": "<p>设备配置</p>"
+          },
+          {
+            "group": "200",
+            "type": "bool",
+            "optional": false,
+            "field": "data.online",
+            "description": "<p>是否在线</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "Get|postApiV1CloudClientGet"
+  },
+  {
+    "type": "get|post",
+    "url": "/api/v1/cloud/client/list",
+    "title": "02 获取平台接入的设备列表",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "LiveGBS",
+              "LiveNVR"
+            ],
+            "optional": true,
+            "field": "type",
+            "description": "<p>设备类型, 不传默认查询所有</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "Get|postApiV1CloudClientList",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "Int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>状态码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>消息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Map",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.id",
+            "description": "<p>主键ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.ClientID",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.ClientName",
+            "description": "<p>设备名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.rows.ClientUser",
+            "description": "<p>设备用户</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.rows.ClientPwd",
+            "description": "<p>设备密码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.ClientConfig",
+            "description": "<p>设备配置</p>"
+          },
+          {
+            "group": "200",
+            "type": "bool",
+            "optional": false,
+            "field": "data.rows.online",
+            "description": "<p>是否在线</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.createAt",
+            "description": "<p>创建时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.updateAt",
+            "description": "<p>更新时间</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get|post",
+    "url": "/api/v1/cloud/gbs/list",
+    "title": "05 查询GBS设备的通道列表",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ON",
+              "OFF"
+            ],
+            "optional": true,
+            "field": "status",
+            "description": "<p>在线状态</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "yes",
+              "no"
+            ],
+            "optional": true,
+            "field": "keeped",
+            "description": "<p>开启状态</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "clientid",
+            "description": "<p>设备ID，不传查询所有</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>通道列表</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>通道数</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.ID",
+            "description": "<p>通道序列号</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.DeviceID",
+            "description": "<p>设备编号</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.Channel",
+            "description": "<p>通道号</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.Name",
+            "description": "<p>通道名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.Manufacturer",
+            "description": "<p>厂家</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.Model",
+            "description": "<p>型号</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.RegisterWay",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "allowedValues": [
+              "ON",
+              "OFF"
+            ],
+            "optional": false,
+            "field": "data.rows.Status",
+            "description": "<p>在线状态</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": true,
+            "field": "data.rows.Longitude",
+            "defaultValue": "0",
+            "description": "<p>径度</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": true,
+            "field": "data.rows.Latitude",
+            "defaultValue": "0",
+            "description": "<p>纬度</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "allowedValues": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4"
+            ],
+            "optional": true,
+            "field": "data.rows.PTZType",
+            "defaultValue": "0",
+            "description": "<p>云台控制类型, 0 - 未知, 1 - 球机, 2 - 半球, 3 - 固定枪机, 4 - 遥控枪机</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "data.rows.DownloadSpeed",
+            "description": "<p>下载倍速范围</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "data.rows.StreamID",
+            "description": "<p>直播流ID, 有值表示正在直播</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": true,
+            "field": "data.rows.NumOutputs",
+            "description": "<p>直播在线人数</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.ClientID",
+            "description": "<p>接入设备ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "data.rows.Live",
+            "description": "<p>直播间信息，有的时候返回，没有的时候返回 &quot;&quot;</p>"
+          },
+          {
+            "group": "200",
+            "type": "Int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>状态码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>消息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Map",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "Get|postApiV1CloudGbsList"
+  },
+  {
+    "type": "get|post",
+    "url": "/api/v1/cloud/nvr/list",
+    "title": "08 查询NVR设备的通道列表",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ON",
+              "OFF"
+            ],
+            "optional": true,
+            "field": "status",
+            "description": "<p>在线状态</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "yes",
+              "no"
+            ],
+            "optional": true,
+            "field": "keeped",
+            "description": "<p>开启状态</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "clientid",
+            "description": "<p>设备ID，不传查询所有</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>通道列表</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>通道数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.rows.ID",
+            "description": "<p>通道号</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.Name",
+            "description": "<p>通道名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.Stats",
+            "description": "<p>在线状态 ON 在线  OFF 离线</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.rows.ErrorString",
+            "description": "<p>错误描述</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "data.rows.Live",
+            "description": "<p>直播间信息，有的时候返回，没有的时候返回 &quot;&quot;</p>"
+          },
+          {
+            "group": "200",
+            "type": "Int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>状态码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>消息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Map",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "Get|postApiV1CloudNvrList"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/cloud/channel/Snap",
+    "title": "11 获取通道快照",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "clientid",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "code",
+            "description": "<p>NVR通道编号 | 国标通道编号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "serial",
+            "description": "<p>国标国标设备编号</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "调用后会直接返回图片流，该接口可以直接配置到类似img 标签的src属性里",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "PostApiV1CloudChannelSnap"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/cloud/client/remove",
+    "title": "04 删除接入设备",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "PostApiV1CloudClientRemove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/cloud/client/save",
+    "title": "01 新建/编辑接入设备",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "id",
+            "description": "<p>不填时表示新建</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "ClientName",
+            "description": "<p>设备名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "ClientType",
+            "defaultValue": "LiveGBS,LiveNVR",
+            "description": "<p>设备类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "ClientID",
+            "description": "<p>设备ID 不传递会自动生成</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "ClientDesc",
+            "description": "<p>描述</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "PostApiV1CloudClientSave",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>状态码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>消息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Map",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.id",
+            "description": "<p>主键ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.ClientID",
+            "description": "<p>设备ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.ClientName",
+            "description": "<p>设备名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.ClientUser",
+            "description": "<p>设备用户</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.ClientPwd",
+            "description": "<p>设备密码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.ClientConfig",
+            "description": "<p>设备配置</p>"
+          },
+          {
+            "group": "200",
+            "type": "bool",
+            "optional": false,
+            "field": "data.online",
+            "description": "<p>是否在线</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.createAt",
+            "description": "<p>创建时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.updateAt",
+            "description": "<p>更新时间</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/cloud/gbs/stream/start",
+    "title": "06 开启GBS设备通道推流云平台",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "clientid",
+            "description": "<p>接入设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "serial",
+            "description": "<p>国标设备编号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "code",
+            "description": "<p>国标通道编号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "recordReserve",
+            "description": "<p>可选 录像保存(天),不传递 第一次启动默认3天，之后启动延用上次启动配置（可在直播配置中统一配置）</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "name",
+            "description": "<p>可选 名称 不传即为通道名称|上次启动传入的名称</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "PostApiV1CloudGbsStreamStart",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>状态码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>消息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Map",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.recordReserve",
+            "description": "<p>录像保存(天)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.actived",
+            "description": "<p>推流开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.authed",
+            "description": "<p>推流鉴权</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.shared",
+            "description": "<p>分享开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.url",
+            "description": "<p>推流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.storePath",
+            "description": "<p>存储路径</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.inFlow",
+            "description": "<p>推送总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.outFlow",
+            "description": "<p>播放总流量(单位：B)</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/cloud/gbs/stream/stop",
+    "title": "07 停止GBS设备通道推流云平台",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "clientid",
+            "description": "<p>接入设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "serial",
+            "description": "<p>国标设备编号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "code",
+            "description": "<p>设备通道编码</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "PostApiV1CloudGbsStreamStop",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/cloud/nvr/stream/start",
+    "title": "09 开启NVR设备通道推流云平台",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "clientid",
+            "description": "<p>接入设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "code",
+            "description": "<p>通道编号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "recordReserve",
+            "description": "<p>可选 录像保存(天),不传递 第一次启动默认3天，之后启动延用上次启动配置（可在直播配置中统一配置）</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "name",
+            "description": "<p>可选 名称 不传即为通道名称|上次启动传入的名称</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "PostApiV1CloudNvrStreamStart",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Int",
+            "optional": false,
+            "field": "code",
+            "description": "<p>状态码</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>消息</p>"
+          },
+          {
+            "group": "200",
+            "type": "Map",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.id",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.name",
+            "description": ""
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.recordReserve",
+            "description": "<p>录像保存(天)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.actived",
+            "description": "<p>推流开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.authed",
+            "description": "<p>推流鉴权</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "data.shared",
+            "description": "<p>分享开关</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.url",
+            "description": "<p>推流地址</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.sharedLink",
+            "description": "<p>分享链接</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.storePath",
+            "description": "<p>存储路径</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.inFlow",
+            "description": "<p>推送总流量(单位：B)</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "data.outFlow",
+            "description": "<p>播放总流量(单位：B)</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/cloud/nvr/stream/stop",
+    "title": "10 停止NVR设备推流云平台",
+    "group": "07cloud",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "clientid",
+            "description": "<p>接入设备ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "code",
+            "description": "<p>通道编号</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/iot.go",
+    "groupTitle": "7. 云平台服务接口",
+    "name": "PostApiV1CloudNvrStreamStop",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/user/getpower",
+    "title": "05 获取用户权限",
+    "group": "08user",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "vod",
+              "live",
+              "record",
+              "vlive"
+            ],
+            "optional": false,
+            "field": "type",
+            "description": "<p>权限类型，点播：vod,直播：live,录像：record，拉转直播：vlive</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "powers",
+            "description": "<p>对应权限的ID数组</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"powers\":[\"test2\"]},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/user.go",
+    "groupTitle": "8. 用户管理接口",
+    "name": "GetApiV1UserGetpower"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/user/addpower",
+    "title": "06 添加指定用户权限",
+    "group": "08user",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "vod",
+              "live",
+              "record",
+              "vlive"
+            ],
+            "optional": false,
+            "field": "type",
+            "description": "<p>权限类型，点播：vod,直播：live,录像：record，拉转直播：vlive</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "powerID",
+            "description": "<p>权限类型对应的ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "powers",
+            "description": "<p>对应权限的ID数组</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "添加成功后返回最新权限\n{\"code\":200,\"data\":{\"powers\":[\"test\",\"test2\"]},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/user.go",
+    "groupTitle": "8. 用户管理接口",
+    "name": "PostApiV1UserAddpower"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/user/list",
+    "title": "01 获取用户列表",
+    "group": "08user",
+    "description": "<p>支持get|post</p>",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.id",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.name",
+            "description": "<p>用户名（登录账号）</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "rows.roles",
+            "description": "<p>用户角色</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "rows.vods",
+            "description": "<p>点播权限IDS</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "rows.lives",
+            "description": "<p>鉴权直播权限IDS</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "rows.records",
+            "description": "<p>回看权限IDS</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "rows.vlives",
+            "description": "<p>拉转直播权限IDS</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.createAt",
+            "description": "<p>创建时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "rows.updateAt",
+            "description": "<p>更新时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"rows\":[{\"id\":\"admin\",\"createAt\":\"2018-09-19 16:22:44\",\"updateAt\":\"2018-09-19 16:22:44\",\"name\":\"admin\",\"roles\":[\"admin\"],\"vods\":[],\"lives\":[],\"vlives\":[],\"records\":[],\"admin\":false}],\"total\":3},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/user.go",
+    "groupTitle": "8. 用户管理接口",
+    "name": "PostApiV1UserList",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/user/remove",
+    "title": "03 删除用户信息",
+    "group": "08user",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "HTTP/1.1 200",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/user.go",
+    "groupTitle": "8. 用户管理接口",
+    "name": "PostApiV1UserRemove"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/user/removepower",
+    "title": "07 删除指定用户权限",
+    "group": "08user",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "vod",
+              "live",
+              "record",
+              "vlive"
+            ],
+            "optional": false,
+            "field": "type",
+            "description": "<p>权限类型，点播：vod,直播：live,录像：record，拉转直播：vlive</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "powerID",
+            "description": "<p>权限类型对应的ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "powers",
+            "description": "<p>对应权限的ID数组</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "删除成功后返回最新权限\n{\"code\":200,\"data\":{\"powers\":[\"test\",\"test2\"]},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/user.go",
+    "groupTitle": "8. 用户管理接口",
+    "name": "PostApiV1UserRemovepower"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/user/resetPwd",
+    "title": "04 重置用户密码",
+    "group": "08user",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>用户ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "HTTP/1.1 200",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/user.go",
+    "groupTitle": "8. 用户管理接口",
+    "name": "PostApiV1UserResetpwd"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/user/save",
+    "title": "02 新增/编辑用户信息",
+    "group": "08user",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "id",
+            "description": "<p>用户ID,传递时表示编辑，不传递表示新增</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "name",
+            "description": "<p>新增时必须传递，用户账号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "roles",
+            "description": "<p>新增时必须传递，用户角色，可以传递数组，或传递英文逗号拼接的字符串</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "password",
+            "description": "<p>用户密码,传递时使用指定密码，不传递使用默认密码</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "vods",
+            "description": "<p>点播权限，点播ID，可以传递数组或传递英文逗号拼接的字符串，传递空字符串时是清除此权限</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "lives",
+            "description": "<p>直播权限，直播流ID，可以传递数组或传递英文逗号拼接的字符串，传递空字符串时是清除此权限</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "records",
+            "description": "<p>回看权限，回看设备ID,可以传递数组或传递英文逗号拼接的字符串，传递空字符串时是清除此权限</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "vlives",
+            "description": "<p>拉转直播权限，拉转直播ID，可以传递数组或传递英文逗号拼接的字符串，传递空字符串时是清除此权限</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>用户ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>用户名（登录账号）</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "roles",
+            "description": "<p>用户角色</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "vods",
+            "description": "<p>点播权限IDS</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "lives",
+            "description": "<p>鉴权直播权限IDS</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "records",
+            "description": "<p>回看权限IDS</p>"
+          },
+          {
+            "group": "200",
+            "type": "[]String",
+            "optional": false,
+            "field": "vlives",
+            "description": "<p>拉转直播权限IDS</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "createAt",
+            "description": "<p>创建时间</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "updateAt",
+            "description": "<p>更新时间</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"id\":\"admin\",\"createAt\":\"2018-09-19 16:22:44\",\"updateAt\":\"2018-09-19 16:22:44\",\"name\":\"admin\",\"roles\":[\"admin\"],\"vods\":[],\"lives\":[],\"vlives\":[],\"records\":[],\"admin\":false},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/user.go",
+    "groupTitle": "8. 用户管理接口",
+    "name": "PostApiV1UserSave"
+  },
+  {
+    "type": "get",
+    "url": "/api/v1/cluster/getPushUrl/:application/:id",
+    "title": "01 获取推流地址",
+    "group": "09cluster",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "hls",
+              "live"
+            ],
+            "optional": false,
+            "field": "application",
+            "description": "<p>应用类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>直播流ID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "说明",
+          "content": "开启集群后，在开启开放直播时候使用，根据集群负载情况，返回开放直播的推流地址。\n{\"url\":\"rtmp://127.0.0.1:10085/hls/test\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/index.go",
+    "groupTitle": "9. 其他接口",
+    "name": "GetApiV1ClusterGetpushurlApplicationId"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/group/remove",
+    "title": "03 删除分组",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "id",
+            "description": "<p>分组ID</p>"
+          }
+        ]
+      }
+    },
+    "group": "10group",
+    "version": "0.0.0",
+    "filename": "routers/group.go",
+    "groupTitle": "10. 分组接口",
+    "name": "PostApiV1GroupRemove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/group/save",
+    "title": "02 新建|编辑分组资源",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "id",
+            "description": "<p>分组ID，为空时候新建，不为空时编辑</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "cid",
+            "description": "<p>自定义分组ID，新建时候可以自定义ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "name",
+            "description": "<p>名称，分组名称或是自定义资源名称</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "parentid",
+            "description": "<p>父分组ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": true,
+            "field": "interval",
+            "description": "<p>播放间隔秒数，优先使用资源单独配置的间隔秒数，其次使用父分组的间隔秒数</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "description",
+            "description": "<p>秒数</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "type",
+            "description": "<p>类型，默认group 更新分组，空或其它时更新资源</p>"
+          }
+        ]
+      }
+    },
+    "group": "10group",
+    "version": "0.0.0",
+    "filename": "routers/group.go",
+    "groupTitle": "10. 分组接口",
+    "name": "PostApiV1GroupSave",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/group/source/get",
+    "title": "08 获取资源详情",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "groupid",
+            "description": "<p>分组ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "sourceid",
+            "description": "<p>资源ID</p>"
+          }
+        ]
+      }
+    },
+    "group": "10group",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "\n鉴权直播资源详情\n{\"code\":200,\"data\":{\"id\":\"test\",\"createAt\":\"2020-12-02 14:38:08\",\"updateAt\":\"2021-04-26 17:23:12\",\"name\":\"test12\",\"recordReserve\":3,\"recordPlan\":\"\",\"delay\":300,\"shared\":true,\"authed\":true,\"actived\":true,\"beginAt\":\"\",\"endAt\":\"\",\"sign\":\"fMaRua0Mg\",\"storePath\":\"\",\"type\":\"\",\"keeped\":false,\"code\":\"\",\"serial\":\"\",\"clientID\":\"\",\"url\":\"rtmp://192.168.2.153:10085/hls/test?sign=fMaRua0Mg\",\"sharedLink\":\"/share.html?id=test\\u0026type=live\",\"customRecordReserve\":true,\"customRecordPlan\":false,\"inFlow\":722976028923,\"outFlow\":114178621672,\"session\":{\"Id\":\"test\",\"Name\":\"test12\",\"Type\":\"live\",\"Application\":\"hls\",\"HLS\":\"/hls/test/test_live.m3u8\",\"DHLS\":\"/dplay/test/test_live.m3u8\",\"HTTPFLV\":\"/flv/hls/test.flv\",\"WSFLV\":\"/ws-flv/hls/test.flv\",\"RTMP\":\"rtmp://192.168.2.153:10085/hls/test\",\"Time\":\"0h 0m 8s\",\"NumOutputs\":0,\"InBytes\":12171396,\"OutBytes\":0,\"InBitrate\":0,\"OutBitrate\":0,\"AudioBitrate\":0,\"VideoBitrate\":0,\"StartTime\":\"2021-05-10 16:21:44\"}},\"msg\":\"Success\"}\n\n拉转直播资源详情\n{\"code\":200,\"data\":{\"id\":\"HMoElwuMR\",\"createAt\":\"2021-04-20 15:20:42\",\"updateAt\":\"2021-05-10 16:23:20\",\"name\":\"test2\",\"type\":\"vod\",\"src\":\"\",\"transport\":\"tcp\",\"shared\":false,\"sign\":\"HMTPlwXMRz\",\"status\":\"living\",\"vodIndex\":-1,\"error\":\"\",\"retry\":34,\"pid\":19040,\"target\":\"\",\"transRate\":0,\"transWidth\":0,\"transHeight\":0,\"vods\":[{\"id\":\"gf2dYKrMg\",\"name\":\"kade\"}],\"sharedLink\":\"/share.html?id=HMoElwuMR\\u0026type=vlive\",\"inFlow\":30824491712,\"outFlow\":69422922,\"session\":{\"Id\":\"HMoElwuMR\",\"Name\":\"HMoElwuMR\",\"Type\":\"openLive\",\"Application\":\"vlive\",\"HLS\":\"/vhls/HMoElwuMR/HMoElwuMR_live.m3u8\",\"DHLS\":\"/dplay/HMoElwuMR/HMoElwuMR_live.m3u8\",\"HTTPFLV\":\"/flv/vlive/HMoElwuMR.flv\",\"WSFLV\":\"/ws-flv/vlive/HMoElwuMR.flv\",\"RTMP\":\"rtmp://192.168.2.153:10085/vlive/HMoElwuMR\",\"Time\":\"0h 0m 4s\",\"NumOutputs\":0,\"InBytes\":534959,\"OutBytes\":0,\"InBitrate\":0,\"OutBitrate\":0,\"AudioBitrate\":0,\"VideoBitrate\":0,\"StartTime\":\"2021-05-10 16:23:21\"}},\"msg\":\"Success\"}\n\n点播资源详情\n{\"code\":200,\"data\":{\"id\":\"TuVQJzYMR\",\"createAt\":\"2021-01-26 15:28:58\",\"updateAt\":\"2021-01-26 15:30:26\",\"name\":\"ss\",\"size\":27392832,\"type\":\"video/mp4\",\"path\":\"/fvod/TuVQJzYMR.mp4\",\"folder\":\"TuVQJzYMR\",\"status\":\"done\",\"duration\":154,\"videoCodec\":\"h264\",\"audioCodec\":\"aac\",\"aspect\":\"960x540\",\"error\":\"\",\"shared\":false,\"rotate\":0,\"resolution\":\"yh,fhd,hd,sd\",\"isresolution\":false,\"resolutiondefault\":\"\",\"transvideo\":false,\"transvideoRate\":0,\"transvideoWidth\":0,\"transvideoHeight\":0,\"snapUrl\":\"/fvod/TuVQJzYMR/snap.jpg\",\"videoUrl\":\"/fvod/TuVQJzYMR/video.m3u8\",\"sharedLink\":\"/share.html?id=TuVQJzYMR\\u0026type=vod\",\"flowNum\":141721920,\"progress\":0,\"playNum\":6},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/group.go",
+    "groupTitle": "10. 分组接口",
+    "name": "PostApiV1GroupSourceGet"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/group/source/list",
+    "title": "04 资源列表",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "sourcetype",
+            "description": "<p>资源类型（live 鉴权直播资源，vlive 拉转直播资源，vod 点播资源）</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "groupid",
+            "description": "<p>关联的分组ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "start",
+            "description": "<p>数据起始位置，默认为0，</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>分页大小，每页显示数据个数，默认为10</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>排序字段</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "allowedValues": [
+              "ascending",
+              "descending"
+            ],
+            "optional": true,
+            "field": "order",
+            "description": "<p>排序顺序</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "q",
+            "description": "<p>查询参数</p>"
+          }
+        ]
+      }
+    },
+    "group": "10group",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "int",
+            "optional": false,
+            "field": "relateCnt",
+            "description": "<p>已关联该分组的资源数目</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>资源ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>资源名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "groupID",
+            "description": "<p>分组ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "bool",
+            "optional": false,
+            "field": "living",
+            "description": "<p>是否可以播放</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"relateCnt\":1,\"rows\":[{\"id\":\"_L3BWzYMg\",\"name\":\"test\",\"type\":\"vlive\",\"groupID\":\"4ScDG19Mg\",\"living\":false},{\"id\":\"HMoElwuMR\",\"name\":\"test2\",\"type\":\"vlive\",\"groupID\":\"\",\"living\":false},{\"id\":\"vyBlvF9GR\",\"name\":\"sss\",\"type\":\"vlive\",\"groupID\":\"\",\"living\":false}],\"total\":3},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "routers/group.go",
+    "groupTitle": "10. 分组接口",
+    "name": "PostApiV1GroupSourceList"
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/group/source/remove",
+    "title": "06 解除分组资源关联",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "groupid",
+            "description": "<p>分组ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "sourceid",
+            "description": "<p>资源ID，支持多个同时关联，用英文逗号分隔</p>"
+          }
+        ]
+      }
+    },
+    "group": "10group",
+    "version": "0.0.0",
+    "filename": "routers/group.go",
+    "groupTitle": "10. 分组接口",
+    "name": "PostApiV1GroupSourceRemove",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/group/source/save",
+    "title": "05 关联分组资源",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "groupid",
+            "description": "<p>分组ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "sourceid",
+            "description": "<p>资源ID，支持多个同时关联，用英文逗号分隔</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "sourcetype",
+            "description": "<p>资源类型（live 鉴权直播资源，vlive 拉转直播资源，vod 点播资源）</p>"
+          }
+        ]
+      }
+    },
+    "group": "10group",
+    "version": "0.0.0",
+    "filename": "routers/group.go",
+    "groupTitle": "10. 分组接口",
+    "name": "PostApiV1GroupSourceSave",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/api/v1/group/tree",
+    "title": "01 获取分组资源",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "parentid",
+            "description": "<p>父分组ID, 默认为空，返回根目录</p>"
+          }
+        ]
+      }
+    },
+    "group": "10group",
+    "success": {
+      "examples": [
+        {
+          "title": "成功 HTTP/1.1 200",
+          "content": "{\"code\":200,\"data\":{\"rows\":[{\"id\":\"_L3BWzYMg\",\"name\":\"test\",\"customName\":\"\",\"parentID\":\"EJZAv19Gg\",\"interval\":0,\"description\":\"\",\"type\":\"vlive\",\"living\":true,\"subCount\":0,\"onlineCount\":0},{\"id\":\"HMoElwuMR\",\"name\":\"test2\",\"customName\":\"\",\"parentID\":\"EJZAv19Gg\",\"interval\":0,\"description\":\"\",\"type\":\"vlive\",\"living\":false,\"subCount\":0,\"onlineCount\":0},{\"id\":\"vyBlvF9GR\",\"name\":\"sss\",\"customName\":\"\",\"parentID\":\"EJZAv19Gg\",\"interval\":0,\"description\":\"\",\"type\":\"vlive\",\"living\":false,\"subCount\":0,\"onlineCount\":0}],\"total\":3},\"msg\":\"Success\"}",
+          "type": "json"
+        }
+      ],
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "data.total",
+            "description": "<p>总数</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "data.rows",
+            "description": "<p>分页数据</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "customName",
+            "description": "<p>自定义名称</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "parentID",
+            "description": "<p>父分组ID</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": false,
+            "field": "interval",
+            "description": "<p>轮播间隔秒数</p>"
+          },
+          {
+            "group": "200",
+            "type": "string",
+            "optional": false,
+            "field": "description",
+            "description": "<p>描述</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>类型，group 分组，live 鉴权直播，vlive 拉转直播，vod 点播</p>"
+          },
+          {
+            "group": "200",
+            "type": "bool",
+            "optional": false,
+            "field": "living",
+            "description": "<p>是否可以播放</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": false,
+            "field": "subCount",
+            "description": "<p>子一级资源数</p>"
+          },
+          {
+            "group": "200",
+            "type": "int",
+            "optional": false,
+            "field": "onlineCount",
+            "description": "<p>子一级可播放资源数</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routers/group.go",
+    "groupTitle": "10. 分组接口",
+    "name": "PostApiV1GroupTree"
+  }
+] });
